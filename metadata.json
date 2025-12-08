@@ -1,0 +1,5 @@
+{
+  "name": "SkyPulse",
+  "description": "An intelligent context engine for astronomical objects, consolidating data from multiple sources into integrated scientific summaries.",
+  "requestFramePermissions": []
+}
