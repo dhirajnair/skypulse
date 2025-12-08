@@ -41,3 +41,38 @@ Real astronomical services (SIMBAD, VizieR, MAST) typically require server-side 
 *   **AI**: Google Gemini API (`@google/genai`)
 *   **Visualization**: D3.js, Recharts
 *   **Icons**: Lucide React
+
+---
+
+## 🏆 Kaggle Submission Writeup
+
+Use the details below for your submission form.
+
+### Title
+**SkyPulse: The Astronomical Context Engine**
+
+### Subtitle
+Bridging the gap between raw celestial data and scientific insight using Gemini.
+
+### Project Description (Summary)
+*Word count: ~160 words*
+
+SkyPulse is an intelligent research dashboard designed to solve the problem of fragmented astronomical data. Researchers often struggle to synthesize information from disconnected catalogs (like SIMBAD or VizieR) to understand a single celestial object.
+
+Built entirely within Google AI Studio using Gemini 3 Pro, SkyPulse accepts list of astronomical identifiers and simulates a cross-match across major databases. It instantly visualizes the object's celestial position using D3.js and renders photometric light curves using Recharts.
+
+The core innovation is the integration of the **Gemini API**. By feeding retrieved physical parameters—coordinates, magnitude, spectral type—into the model, SkyPulse generates a coherent, scientifically grounded summary of the object. This transforms raw, tabular numbers into a human-readable narrative, instantly providing context about the object's nature (e.g., differentiating a "Main Sequence Star" from an "Exoplanet Host"). The application demonstrates how Large Language Models can act as reasoning engines that bridge the gap between hard scientific data and human understanding.
+
+### How I Built It
+I utilized **Google AI Studio** and the **Gemini 3 Pro** model to "Vibe Code" this application. 
+1.  **Iterative Design**: I started with a high-level prompt for a "Space-themed scientific dashboard" and iteratively refined the UI components using Gemini's code generation capabilities.
+2.  **Mocking Complexity**: To ensure the app runs flawlessly in a browser-only preview, I used Gemini to write a robust mock data service that simulates complex asynchronous API calls to astronomical backends.
+3.  **AI Integration**: I implemented the `@google/genai` SDK to drive the "Intelligent Summary" feature, allowing the app to generate dynamic text based on the specific data of the selected star or planet.
+
+**Link to AI Studio App**: [INSERT YOUR PUBLIC LINK HERE]
+
+### Why It Matters (Impact)
+Scientific data is exploding in volume but often lacks accessibility. Tools like SkyPulse demonstrate how AI can serve as an intermediate layer, synthesizing complex, multi-source datasets into actionable insights. This reduces the cognitive load on researchers, students, and enthusiasts, allowing them to focus on the *meaning* of the data rather than the mechanics of retrieval.
+
+### Selected Track
+Gemini 2.5/3.0 Track (Vibe Coding)
