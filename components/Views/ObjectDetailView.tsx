@@ -27,11 +27,19 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
   };
 
   const handlePrint = () => {
-    window.print();
+    // Check if we are in a sandboxed iframe that blocks printing
+    try {
+        const result = window.print();
+        // Some browsers return undefined, others void. 
+        // If it throws, we catch it.
+    } catch (e) {
+        console.error("Print failed:", e);
+        alert("Printing is currently blocked by the browser environment. Please run the application locally or open in a full window to print.");
+    }
   };
 
   return (
-    <div className="max-w-7xl mx-auto pt-6 px-4 pb-20 print:pt-0 print:pb-0">
+    <div className="max-w-7xl mx-auto pt-6 px-4 pb-20 print:pt-0 print:pb-0 print:w-full print:max-w-none">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 print:hidden">
         <div className="flex items-start gap-4">
@@ -73,21 +81,26 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
       </div>
       
       {/* Print-only Header */}
-      <div className="hidden print:block mb-6">
-        <h1 className="text-3xl font-bold text-black">{object.primaryName}</h1>
-        <p className="text-gray-600">SkyPulse Report - {new Date().toLocaleDateString()}</p>
+      <div className="hidden print:block mb-6 border-b border-gray-300 pb-4">
+        <h1 className="text-3xl font-bold text-black mb-1">{object.primaryName}</h1>
+        <div className="flex justify-between items-end">
+            <p className="text-gray-600 text-sm">SkyPulse Scientific Report</p>
+            <p className="text-gray-500 text-xs">{new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 print:block print:space-y-6">
         
         {/* Left Column: Visuals */}
-        <div className="space-y-6">
+        <div className="space-y-6 print:mb-6">
             {/* Sky Map Card */}
-            <div className="bg-space-900 border border-space-800 rounded-xl p-6 shadow-xl print:border-gray-300 print:bg-white print:text-black">
+            <div className="bg-space-900 border border-space-800 rounded-xl p-6 shadow-xl print:border print:border-gray-300 print:bg-white print:text-black print:shadow-none break-inside-avoid">
                 <h3 className="text-sm font-bold text-slate-400 print:text-gray-600 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <Star size={16} /> Celestial Position
                 </h3>
-                <SkyMapViz ra={object.ra || 0} dec={object.dec || 0} />
+                <div className="print:flex print:justify-center">
+                    <SkyMapViz ra={object.ra || 0} dec={object.dec || 0} />
+                </div>
                 <div className="grid grid-cols-2 gap-4 mt-4 text-center">
                     <div className="bg-space-950 p-2 rounded border border-space-800 print:bg-gray-100 print:border-gray-200">
                         <div className="text-xs text-slate-500 mb-1">RA</div>
@@ -101,7 +114,7 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
             </div>
 
             {/* AI Summary Card */}
-            <div className="bg-space-900 border border-space-800 rounded-xl p-6 shadow-xl relative overflow-hidden group print:border-gray-300 print:bg-white">
+            <div className="bg-space-900 border border-space-800 rounded-xl p-6 shadow-xl relative overflow-hidden group print:border print:border-gray-300 print:bg-white print:shadow-none break-inside-avoid">
                 <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-accent-purple to-accent-cyan print:hidden" />
                 <h3 className="text-sm font-bold text-white print:text-black uppercase tracking-wider mb-4 flex items-center gap-2">
                     <Zap size={16} className="text-accent-gold print:text-black" /> Intelligent Summary
@@ -118,6 +131,12 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
                       </button>
                    </div>
                 )}
+                
+                {!summary && (
+                    <div className="hidden print:block text-gray-500 italic text-sm">
+                        No AI summary generated for this report.
+                    </div>
+                )}
 
                 {loadingSummary && (
                     <div className="space-y-2 animate-pulse">
@@ -128,7 +147,7 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
                 )}
 
                 {summary && (
-                    <div className="prose prose-invert prose-sm text-slate-300 leading-relaxed print:text-black">
+                    <div className="prose prose-invert prose-sm text-slate-300 leading-relaxed print:text-black print:prose-neutral">
                         {summary}
                     </div>
                 )}
@@ -136,10 +155,10 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
         </div>
 
         {/* Center/Right: Data */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 print:space-y-6">
             
             {/* Key Parameters Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 break-inside-avoid">
                 {[
                     { label: 'Distance', value: object.distance ? `${object.distance.toFixed(1)} pc` : 'N/A' },
                     { label: 'Magnitude', value: object.magnitude?.toFixed(2) || 'N/A' },
@@ -154,7 +173,7 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
             </div>
 
             {/* Light Curve Chart */}
-            <div className="bg-space-900 border border-space-800 rounded-xl p-6 shadow-xl print:bg-white print:border-gray-300">
+            <div className="bg-space-900 border border-space-800 rounded-xl p-6 shadow-xl print:bg-white print:border-gray-300 print:shadow-none break-inside-avoid">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-sm font-bold text-slate-400 print:text-gray-600 uppercase tracking-wider">
                         Flux Time Series (Normalized)
@@ -165,8 +184,8 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
                 </div>
                 
                 {object.lightCurveData && object.lightCurveData.length > 0 ? (
-                    <div className="h-64 w-full">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="h-64 w-full print:h-[250px]">
+                        <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={150}>
                             <LineChart data={object.lightCurveData}>
                                 <XAxis 
                                     dataKey="time" 
@@ -205,18 +224,18 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
             </div>
 
             {/* Data Sources */}
-            <div className="bg-space-900 border border-space-800 rounded-xl p-6 print:bg-white print:border-gray-300">
+            <div className="bg-space-900 border border-space-800 rounded-xl p-6 print:bg-white print:border-gray-300 print:shadow-none break-inside-avoid">
                 <h3 className="text-sm font-bold text-slate-400 print:text-gray-600 uppercase tracking-wider mb-4 flex items-center gap-2">
                     <Database size={16} /> Data Provenance
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-3 print:grid print:grid-cols-2 print:gap-4 print:space-y-0">
                     {object.sources.map(source => (
                         <div key={source.sourceName} className="flex items-center justify-between p-3 bg-space-950 rounded-lg border border-space-800 print:bg-gray-50 print:border-gray-200">
                             <span className="text-sm font-medium text-slate-300 print:text-black">{source.sourceName}</span>
                             <div className="flex items-center gap-2">
-                                {source.status === 'success' && <span className="w-2 h-2 rounded-full bg-green-500" />}
-                                {source.status === 'failed' && <span className="w-2 h-2 rounded-full bg-red-500" />}
-                                {source.status === 'no-data' && <span className="w-2 h-2 rounded-full bg-slate-600" />}
+                                {source.status === 'success' && <span className="w-2 h-2 rounded-full bg-green-500 print:border print:border-green-600" />}
+                                {source.status === 'failed' && <span className="w-2 h-2 rounded-full bg-red-500 print:border print:border-red-600" />}
+                                {source.status === 'no-data' && <span className="w-2 h-2 rounded-full bg-slate-600 print:border print:border-gray-600" />}
                                 <span className="text-xs text-slate-500 uppercase">{source.status}</span>
                             </div>
                         </div>

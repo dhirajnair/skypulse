@@ -63,11 +63,13 @@ function App() {
   const selectedObject = objects.find(o => o.id === selectedObjectId);
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden text-slate-200">
-      <StarField />
+    <div className="min-h-screen relative overflow-x-hidden text-slate-200 print:text-black print:bg-white print:overflow-visible print:h-auto">
+      <div className="print:hidden">
+        <StarField />
+      </div>
       
       {/* Navigation Bar */}
-      <nav className="border-b border-space-800 bg-space-950/80 backdrop-blur-md sticky top-0 z-50">
+      <nav className="border-b border-space-800 bg-space-950/80 backdrop-blur-md sticky top-0 z-50 print:hidden">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div 
             className="flex items-center gap-2 font-display font-bold text-xl cursor-pointer"
@@ -96,7 +98,7 @@ function App() {
       </nav>
 
       {/* Main Content Area */}
-      <main>
+      <main className="print:w-full print:block">
         {view === 'landing' && <LandingView onSearch={startProcessing} />}
         
         {view === 'processing' && (

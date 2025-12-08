@@ -61,6 +61,18 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #64748B;
       }
+
+      @media print {
+        body {
+          background-color: white !important;
+          color: black !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        ::-webkit-scrollbar {
+          display: none;
+        }
+      }
     </style>
   <script type="importmap">
 {
