@@ -4,9 +4,9 @@ import ProcessingView from './components/Views/ProcessingView';
 import ResultsView from './components/Views/ResultsView';
 import ObjectDetailView from './components/Views/ObjectDetailView';
 import StarField from './components/StarField';
+import HeaderLogo from './components/HeaderLogo';
 import { AstroObject, ViewState } from './types';
 import { startQuerySession, getSessionStatus, getSessionResults } from './services/api';
-import { Rocket } from 'lucide-react';
 
 function App() {
   const [view, setView] = useState<ViewState>('landing');
@@ -72,13 +72,10 @@ function App() {
       <nav className="border-b border-space-800 bg-space-950/80 backdrop-blur-md sticky top-0 z-50 print:hidden">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div 
-            className="flex items-center gap-2 font-display font-bold text-xl cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer"
             onClick={() => setView('landing')}
           >
-            <div className="bg-accent-purple/20 p-2 rounded-lg">
-                <Rocket size={20} className="text-accent-purple" />
-            </div>
-            <span className="tracking-tight text-white">SkyPulse</span>
+            <HeaderLogo />
           </div>
           
           <div className="flex gap-6 text-sm font-medium text-slate-400">

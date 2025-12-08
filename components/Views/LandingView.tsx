@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Upload, FileText, Activity } from 'lucide-react';
+import { Search, Upload, FileText } from 'lucide-react';
 import { SAMPLE_IDS } from '../../constants';
 
 interface LandingViewProps {
@@ -21,9 +21,6 @@ const LandingView: React.FC<LandingViewProps> = ({ onSearch }) => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 max-w-4xl mx-auto text-center animate-fade-in">
-      <div className="mb-8 p-4 rounded-full bg-space-900 border border-space-800 shadow-xl shadow-accent-purple/10">
-        <Activity className="w-12 h-12 text-accent-cyan" />
-      </div>
       
       <h1 className="text-5xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-accent-purple mb-4">
         Discover the Universe
@@ -49,7 +46,11 @@ const LandingView: React.FC<LandingViewProps> = ({ onSearch }) => {
             >
               <FileText size={14} /> Load Examples
             </button>
-            <button className="flex items-center gap-2 text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-md hover:bg-space-800 transition-colors cursor-not-allowed opacity-50">
+            <button 
+              disabled
+              className="flex items-center gap-2 text-xs text-slate-600 cursor-not-allowed px-3 py-1.5 rounded-md border border-transparent transition-colors"
+              title="CSV Upload coming soon"
+            >
               <Upload size={14} /> Upload CSV
             </button>
           </div>
