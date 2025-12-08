@@ -17,9 +17,10 @@ const SkyMapViz: React.FC<SkyMapVizProps> = ({ ra, dec }) => {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    // Aitoff projection for sky map
-    const projection = d3.geoAitoff()
-      .scale(70)
+    // Replaced geoAitoff with geoEquirectangular as Aitoff is in d3-geo-projection
+    // which is not included in the standard d3 bundle loaded via CDN.
+    const projection = d3.geoEquirectangular()
+      .scale(48) // Adjusted scale to fit 300x150
       .translate([width / 2, height / 2])
       .precision(0.1);
 
@@ -47,8 +48,8 @@ const SkyMapViz: React.FC<SkyMapVizProps> = ({ ra, dec }) => {
     const lon = ra > 180 ? ra - 360 : ra;
     const lat = dec;
 
-    // Draw the object
-    const point = { type: "Point", coordinates: [-lon, lat] }; // Invert RA for sky view usually
+    // Use -lon to simulate looking up at the sky (RA increases eastward/left on sky maps)
+    const point = { type: "Point", coordinates: [-lon, lat] }; 
 
     svg.append("path")
       .datum(point as any)

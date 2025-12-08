@@ -1,54 +1,57 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import LandingView from './components/Views/LandingView';
 import ProcessingView from './components/Views/ProcessingView';
 import ResultsView from './components/Views/ResultsView';
 import ObjectDetailView from './components/Views/ObjectDetailView';
 import StarField from './components/StarField';
-import { AstroObject, ViewState, IDType } from './types';
-import { simulateObjectRetrieval } from './services/mockDataService';
-import { detectIDType } from './constants';
+import { AstroObject, ViewState } from './types';
+import { startQuerySession, getSessionStatus, getSessionResults } from './services/api';
 import { Rocket } from 'lucide-react';
 
 function App() {
   const [view, setView] = useState<ViewState>('landing');
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [objects, setObjects] = useState<AstroObject[]>([]);
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
 
-  const startProcessing = useCallback(async (ids: string[]) => {
-    setView('processing');
-    
-    // Create initial placeholder objects
-    const initialObjects: AstroObject[] = ids.map(id => ({
-      id: crypto.randomUUID(),
-      inputName: id,
-      detectedType: detectIDType(id),
-      status: 'pending',
-      sources: [],
-      tags: []
-    }));
+  // Poll for results when in processing mode
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
 
-    setObjects(initialObjects);
+    if (view === 'processing' && currentSessionId) {
+      const poll = async () => {
+        // 1. Get Status
+        const session = await getSessionStatus(currentSessionId);
+        // 2. Get Real-time Results (so we see progress bars update)
+        const currentObjects = await getSessionResults(currentSessionId);
+        setObjects(currentObjects);
 
-    // Simulate processing queue
-    // In a real app, this would be a Promise.all or a batch job
-    const processedObjects = [...initialObjects];
-    
-    for (let i = 0; i < processedObjects.length; i++) {
-        // Update to 'processing'
-        processedObjects[i] = { ...processedObjects[i], status: 'processing' };
-        setObjects([...processedObjects]);
+        // 3. Check for completion
+        if (session && (session.status === 'completed' || session.status === 'failed')) {
+           // Wait a brief moment for UI transition
+           setTimeout(() => {
+             setView('results');
+           }, 1000);
+        }
+      };
 
-        // Simulate API call
-        const result = await simulateObjectRetrieval(processedObjects[i].inputName, processedObjects[i].detectedType);
-        
-        // Update with result
-        processedObjects[i] = result;
-        setObjects([...processedObjects]);
+      interval = setInterval(poll, 1000); // Poll every second
+      poll(); // Immediate first call
     }
 
+    return () => clearInterval(interval);
+  }, [view, currentSessionId]);
+
+
+  const startProcessing = useCallback(async (ids: string[]) => {
+    // Call the "API" to start the session
+    const session = await startQuerySession(ids);
+    setCurrentSessionId(session.id);
+    setView('processing');
   }, []);
 
   const handleProcessingComplete = () => {
+    // This is now handled by the polling effect
     setView('results');
   };
 

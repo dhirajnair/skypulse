@@ -1,4 +1,4 @@
-import { AstroObject, DataSourceStatus } from '../types';
+import { AstroObject, DataSourceResult } from '../types';
 
 // Random float in range
 const random = (min: number, max: number) => Math.random() * (max - min) + min;
@@ -15,23 +15,22 @@ const generateLightCurve = (points = 50) => {
   return data;
 };
 
-export const simulateObjectRetrieval = async (inputName: string, idType: string): Promise<AstroObject> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, random(500, 2000)));
+// Simulates the external API calls (SIMBAD, VizieR, etc.)
+// Returns a partial object with the retrieved data
+export const simulateObjectRetrieval = async (inputName: string, idType: string): Promise<Partial<AstroObject>> => {
+  // Simulate network delay for the "External API"
+  await new Promise(resolve => setTimeout(resolve, random(400, 1000)));
 
   const isStar = Math.random() > 0.3;
   
-  const sources: DataSourceStatus[] = [
-    { name: 'SIMBAD', status: 'success' },
-    { name: 'VizieR', status: 'success' },
-    { name: 'NASA Exoplanet', status: isStar ? 'no-data' : 'success' },
-    { name: 'MAST', status: 'success' },
+  const sources: DataSourceResult[] = [
+    { sourceName: 'SIMBAD', status: 'success', timestamp: new Date().toISOString() },
+    { sourceName: 'VizieR', status: 'success', timestamp: new Date().toISOString() },
+    { sourceName: 'NASA Exoplanet', status: isStar ? 'no-data' : 'success', timestamp: new Date().toISOString() },
+    { sourceName: 'MAST', status: 'success', timestamp: new Date().toISOString() },
   ];
 
   return {
-    id: crypto.randomUUID(),
-    inputName,
-    detectedType: idType as any,
     primaryName: inputName.toUpperCase().replace('GAIA', 'Gaia').replace('TIC', 'TIC'),
     objectType: isStar ? 'Main Sequence Star' : 'Exoplanet Host',
     ra: random(0, 360),
@@ -42,7 +41,6 @@ export const simulateObjectRetrieval = async (inputName: string, idType: string)
     spectralType: isStar ? ['G2V', 'M4V', 'K2III'][Math.floor(Math.random() * 3)] : 'K5V',
     temperature: random(3000, 8000),
     mass: random(0.1, 2.0),
-    status: 'complete',
     sources: sources,
     tags: isStar ? ['High Proper Motion', 'Gaia DR3'] : ['Transiting Planet', 'TESS Object'],
     lightCurveData: generateLightCurve(),

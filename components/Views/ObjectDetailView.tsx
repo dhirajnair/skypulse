@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AstroObject } from '../../types';
-import { ArrowLeft, Share2, Download, Database, Zap, Star, Code, FileJson, Printer } from 'lucide-react';
+import { ArrowLeft, Database, Zap, Star, Code, FileJson, Printer } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import SkyMapViz from '../SkyMapViz';
 import { generateObjectSummary } from '../../services/geminiService';
@@ -141,7 +141,7 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
             {/* Key Parameters Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                    { label: 'Distance', value: object.distance ? `${object.distance} pc` : 'N/A' },
+                    { label: 'Distance', value: object.distance ? `${object.distance.toFixed(1)} pc` : 'N/A' },
                     { label: 'Magnitude', value: object.magnitude?.toFixed(2) || 'N/A' },
                     { label: 'Spectral Type', value: object.spectralType || 'N/A' },
                     { label: 'Temperature', value: object.temperature ? `${Math.round(object.temperature)} K` : 'N/A' },
@@ -164,38 +164,44 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
                     </div>
                 </div>
                 
-                <div className="h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={object.lightCurveData}>
-                            <XAxis 
-                                dataKey="time" 
-                                stroke="#475569" 
-                                tick={{fontSize: 12}} 
-                                tickLine={false}
-                                axisLine={false}
-                            />
-                            <YAxis 
-                                domain={['auto', 'auto']} 
-                                stroke="#475569" 
-                                tick={{fontSize: 12}}
-                                tickLine={false}
-                                axisLine={false}
-                            />
-                            <Tooltip 
-                                contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155', color: '#fff' }}
-                                itemStyle={{ color: '#F59E0B' }}
-                            />
-                            <Line 
-                                type="monotone" 
-                                dataKey="flux" 
-                                stroke="#F59E0B" 
-                                strokeWidth={2} 
-                                dot={false} 
-                                activeDot={{ r: 4, fill: '#fff' }}
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
+                {object.lightCurveData && object.lightCurveData.length > 0 ? (
+                    <div className="h-64 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={object.lightCurveData}>
+                                <XAxis 
+                                    dataKey="time" 
+                                    stroke="#475569" 
+                                    tick={{fontSize: 12}} 
+                                    tickLine={false}
+                                    axisLine={false}
+                                />
+                                <YAxis 
+                                    domain={['auto', 'auto']} 
+                                    stroke="#475569" 
+                                    tick={{fontSize: 12}}
+                                    tickLine={false}
+                                    axisLine={false}
+                                />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: '#0F172A', borderColor: '#334155', color: '#fff' }}
+                                    itemStyle={{ color: '#F59E0B' }}
+                                />
+                                <Line 
+                                    type="monotone" 
+                                    dataKey="flux" 
+                                    stroke="#F59E0B" 
+                                    strokeWidth={2} 
+                                    dot={false} 
+                                    activeDot={{ r: 4, fill: '#fff' }}
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                ) : (
+                     <div className="h-64 w-full flex items-center justify-center text-slate-500 text-sm italic">
+                        No light curve data available for this object.
+                     </div>
+                )}
             </div>
 
             {/* Data Sources */}
@@ -205,8 +211,8 @@ const ObjectDetailView: React.FC<ObjectDetailViewProps> = ({ object, onBack }) =
                 </h3>
                 <div className="space-y-3">
                     {object.sources.map(source => (
-                        <div key={source.name} className="flex items-center justify-between p-3 bg-space-950 rounded-lg border border-space-800 print:bg-gray-50 print:border-gray-200">
-                            <span className="text-sm font-medium text-slate-300 print:text-black">{source.name}</span>
+                        <div key={source.sourceName} className="flex items-center justify-between p-3 bg-space-950 rounded-lg border border-space-800 print:bg-gray-50 print:border-gray-200">
+                            <span className="text-sm font-medium text-slate-300 print:text-black">{source.sourceName}</span>
                             <div className="flex items-center gap-2">
                                 {source.status === 'success' && <span className="w-2 h-2 rounded-full bg-green-500" />}
                                 {source.status === 'failed' && <span className="w-2 h-2 rounded-full bg-red-500" />}

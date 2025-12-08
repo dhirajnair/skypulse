@@ -34,7 +34,7 @@ export const exportToCSV = (objects: AstroObject[], filename: string) => {
     { header: 'Spectral Type', accessor: (o: AstroObject) => o.spectralType || '' },
     { header: 'Temperature (K)', accessor: (o: AstroObject) => o.temperature?.toString() || '' },
     { header: 'Tags', accessor: (o: AstroObject) => o.tags.join('; ') },
-    { header: 'Sources', accessor: (o: AstroObject) => o.sources.map(s => s.name).join('; ') },
+    { header: 'Sources', accessor: (o: AstroObject) => o.sources.map(s => s.sourceName).join('; ') },
   ];
 
   // Generate Header Row

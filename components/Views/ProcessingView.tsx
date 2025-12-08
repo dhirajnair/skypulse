@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AstroObject } from '../../types';
 import { Loader2, CheckCircle2, Circle } from 'lucide-react';
 
@@ -6,6 +6,30 @@ interface ProcessingViewProps {
   objects: AstroObject[];
   onComplete: () => void;
 }
+
+const ProcessingStatusText = () => {
+  const messages = [
+    "Querying SIMBAD...",
+    "Accessing VizieR catalogs...",
+    "Connecting to NASA Exoplanet Archive...",
+    "Retrieving MAST data...",
+    "Cross-matching identifiers...",
+    "Normalizing units...",
+    "Generating scientific summary..."
+  ];
+  
+  // Random start so it looks organic if parallel
+  const [index, setIndex] = useState(() => Math.floor(Math.random() * messages.length));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % messages.length);
+    }, 800); // Cycle every 800ms
+    return () => clearInterval(interval);
+  }, []);
+
+  return <span className="text-xs text-accent-gold animate-pulse font-mono">{messages[index]}</span>;
+};
 
 const ProcessingView: React.FC<ProcessingViewProps> = ({ objects, onComplete }) => {
   const completedCount = objects.filter(o => o.status === 'complete' || o.status === 'failed').length;
@@ -37,7 +61,7 @@ const ProcessingView: React.FC<ProcessingViewProps> = ({ objects, onComplete }) 
 
       <div className="bg-space-900/50 border border-space-800 rounded-xl overflow-hidden shadow-2xl">
         <div className="p-4 bg-space-900 border-b border-space-800 flex justify-between items-center">
-          <span className="font-mono text-sm text-slate-400">SESSION ID: {crypto.randomUUID().slice(0, 8)}</span>
+          <span className="font-mono text-sm text-slate-400">SESSION ID: {objects[0]?.sessionId?.slice(0, 8) || 'INITIALIZING'}</span>
           <span className="text-xs font-medium px-2 py-1 bg-space-800 rounded text-accent-cyan">
             {completedCount}/{objects.length} OBJECTS
           </span>
@@ -50,6 +74,7 @@ const ProcessingView: React.FC<ProcessingViewProps> = ({ objects, onComplete }) 
                 {obj.status === 'pending' && <Circle size={18} className="text-slate-600" />}
                 {obj.status === 'processing' && <Loader2 size={18} className="text-accent-gold animate-spin" />}
                 {obj.status === 'complete' && <CheckCircle2 size={18} className="text-green-500" />}
+                {obj.status === 'failed' && <div className="w-[18px] h-[18px] rounded-full border-2 border-red-500 flex items-center justify-center"><div className="w-1 h-1 bg-red-500 rounded-full"></div></div>}
                 
                 <div>
                   <div className="font-mono text-sm text-slate-200">{obj.inputName}</div>
@@ -59,10 +84,16 @@ const ProcessingView: React.FC<ProcessingViewProps> = ({ objects, onComplete }) 
               
               <div className="flex gap-2">
                  {obj.status === 'processing' && (
-                   <span className="text-xs text-accent-gold animate-pulse">Querying SIMBAD...</span>
+                   <ProcessingStatusText />
                  )}
                  {obj.status === 'complete' && (
                    <span className="text-xs text-slate-400">Done</span>
+                 )}
+                 {obj.status === 'failed' && (
+                   <span className="text-xs text-red-400">Failed</span>
+                 )}
+                 {obj.status === 'pending' && (
+                   <span className="text-xs text-slate-600">Pending...</span>
                  )}
               </div>
             </div>
