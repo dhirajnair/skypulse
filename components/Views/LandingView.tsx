@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Upload, FileText } from 'lucide-react';
+import HeroTelescope from '../HeroTelescope';
 import { SAMPLE_IDS } from '../../constants';
 
 interface LandingViewProps {
@@ -22,6 +23,10 @@ const LandingView: React.FC<LandingViewProps> = ({ onSearch }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 max-w-4xl mx-auto text-center animate-fade-in">
       
+      <div className="mb-8 p-4 rounded-full bg-space-900 border border-space-800 shadow-xl shadow-accent-purple/10">
+        <HeroTelescope className="w-16 h-16" />
+      </div>
+
       <h1 className="text-5xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-white to-accent-purple mb-4">
         Discover the Universe
       </h1>
