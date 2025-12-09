@@ -69,7 +69,9 @@ I utilized **Google AI Studio** and the **Gemini 3 Pro** model to "Vibe Code" th
 2.  **Mocking Complexity**: To ensure the app runs flawlessly in a browser-only preview, I used Gemini to write a robust mock data service that simulates complex asynchronous API calls to astronomical backends.
 3.  **AI Integration**: I implemented the `@google/genai` SDK to drive the "Intelligent Summary" feature, allowing the app to generate dynamic text based on the specific data of the selected star or planet.
 
-**Link to AI Studio App**: [INSERT YOUR PUBLIC LINK HERE]
+
+Video Demo: https://www.loom.com/share/56e82b7824894d35ab93434d361e2e23
+Idea credit: hanasoge@tifr.res.in
 
 ### Why It Matters (Impact)
 Scientific data is exploding in volume but often lacks accessibility. Tools like SkyPulse demonstrate how AI can serve as an intermediate layer, synthesizing complex, multi-source datasets into actionable insights. This reduces the cognitive load on researchers, students, and enthusiasts, allowing them to focus on the *meaning* of the data rather than the mechanics of retrieval.
