@@ -71,6 +71,7 @@ I utilized **Google AI Studio** and the **Gemini 3 Pro** model to "Vibe Code" th
 
 
 Video Demo: https://www.loom.com/share/56e82b7824894d35ab93434d361e2e23
+
 Idea credit: hanasoge@tifr.res.in
 
 ### Why It Matters (Impact)
